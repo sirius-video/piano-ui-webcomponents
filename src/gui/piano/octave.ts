@@ -7,11 +7,19 @@ import {
 	customElement,
 } from "lit-element";
 import { ToneKeyboardNote } from "./note";
+import { Midi } from "tone";
 
 @customElement("tone-keyboard-octave")
 export class ToneKeyboardOctave extends LitElement {
 	@property({ type: Number })
 	octave = 1;
+
+	@property({ type: String })
+	highlightedNotes = "";
+
+	private isHighlighted(note) {
+		return this.highlightedNotes.includes(Midi(note).toNote());
+	}
 
 	noteon(number) {
 		const note = this.shadowRoot.querySelector(
@@ -93,7 +101,9 @@ export class ToneKeyboardOctave extends LitElement {
 					${whiteNotes.map(
 						(note) => html`
 							<tone-keyboard-note
-								color="#aaa"
+								color="${this.isHighlighted(note)
+									? "#413ED0"
+									: "#cbc7d1"}"
 								note="${note.toString()}"
 							></tone-keyboard-note>
 						`
@@ -103,7 +113,9 @@ export class ToneKeyboardOctave extends LitElement {
 					${blackNotes.map(
 						(note) => html`
 							<tone-keyboard-note
-								color="black"
+								color="${this.isHighlighted(note)
+									? "#413ED0"
+									: "#151515"}"
 								note="${note.toString()}"
 							></tone-keyboard-note>
 						`

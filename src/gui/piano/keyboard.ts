@@ -23,6 +23,9 @@ export class ToneKeyboard extends LitElement {
 	@property({ type: Boolean })
 	polyphonic = false;
 
+	@property({ type: String })
+	highlightedNotes = "";
+
 	private _computerKeyboard: AudioKeys;
 
 	constructor() {
@@ -125,6 +128,7 @@ export class ToneKeyboard extends LitElement {
 				${octaves.map(
 					(o) => html`
 						<tone-keyboard-octave
+							highlightedNotes=${this.highlightedNotes}
 							octave=${o.toString()}
 						></tone-keyboard-octave>
 					`

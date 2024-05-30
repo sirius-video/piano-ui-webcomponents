@@ -8,6 +8,9 @@ export class TonePiano extends LitElement {
 	@property({ type: Boolean })
 	polyphonic = false;
 
+	@property({ type: String })
+	highlightedNotes = "";
+
 	firstUpdated(props) {
 		super.firstUpdated(props);
 		const keyboard = this.shadowRoot.querySelector(
@@ -38,12 +41,12 @@ export class TonePiano extends LitElement {
 		const width = this.shadowRoot.querySelector("#container").clientWidth;
 		const octaves = this._clamp(Math.floor(width / 100) - 1, 1, 8);
 		const rootNote = Math.ceil(this._scale(octaves, 1, 8, 5, 1));
-		(this.shadowRoot.querySelector(
-			"tone-keyboard"
-		) as ToneKeyboard).rootoctave = rootNote;
-		(this.shadowRoot.querySelector(
-			"tone-keyboard"
-		) as ToneKeyboard).octaves = octaves;
+		(
+			this.shadowRoot.querySelector("tone-keyboard") as ToneKeyboard
+		).rootoctave = rootNote;
+		(
+			this.shadowRoot.querySelector("tone-keyboard") as ToneKeyboard
+		).octaves = octaves;
 	}
 
 	render() {
@@ -75,7 +78,10 @@ export class TonePiano extends LitElement {
 			</style>
 			<div id="container">
 				<tone-midi-in> </tone-midi-in>
-				<tone-keyboard ?polyphonic=${this.polyphonic}></tone-keyboard>
+				<tone-keyboard
+					highlightedNotes=${JSON.stringify(this.highlightedNotes)}
+					?polyphonic=${this.polyphonic}
+				></tone-keyboard>
 			</div>
 		`;
 	}
@@ -92,6 +98,7 @@ interface ElementOptions {
 	polyphonic?: boolean;
 	noteon?: (e: NoteEvent) => void;
 	noteoff?: (e: NoteEvent) => void;
+	highlightedNotes?: string;
 }
 
 /**
@@ -102,10 +109,11 @@ export function createPiano({
 	polyphonic = true,
 	noteon = () => {},
 	noteoff = () => {},
+	highlightedNotes = "",
 }: ElementOptions): TonePiano {
 	const element = document.createElement("tone-piano") as TonePiano;
 	element.polyphonic = polyphonic;
-
+	element.highlightedNotes = highlightedNotes;
 	element.addEventListener("noteon", (e: CustomEvent) => noteon(e.detail));
 	element.addEventListener("noteoff", (e: CustomEvent) => noteoff(e.detail));
 	if (parent) {
